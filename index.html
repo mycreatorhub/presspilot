@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PressPilot | AI Newsroom</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f6fa;
+  color: #172b45;
+}
+
+header {
+  background: #142a45;
+  color: white;
+  padding: 22px;
+}
+
+.brand {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.brand span {
+  color: #54c5e8;
+}
+
+header p {
+  color: #cbd8e6;
+  font-size: 13px;
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 14px;
+  background: white;
+}
+
+nav button {
+  border: none;
+  padding: 11px 15px;
+  border-radius: 8px;
+  background: #edf2f7;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+nav button.active {
+  background: #142a45;
+  color: white;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 22px;
+}
+
+h1 {
+  font-size: 27px;
+}
+
+.muted {
+  color: #68798d;
+  font-size: 14px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.card, .panel {
+  background: white;
+  border-radius: 13px;
+  padding: 19px;
+  box-shadow: 0 3px 12px #142a4510;
+}
+
+.card strong {
+  font-size: 27px;
+  display: block;
+  margin-top: 10px;
+}
+
+.panel {
+  margin: 15px 0;
+}
+
+button.primary {
+  background: #176b9b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 17px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #edf2f7;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d5deea;
+  border-radius: 8px;
+  margin: 8px 0 15px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 120px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.tag {
+  font-size: 11px;
+  background: #e8f4fa;
+  color: #176b9b;
+  padding: 5px 8px;
+  border-radius: 20px;
+}
+
+.story {
+  border-bottom: 1px solid #e8edf3;
+  padding: 13px 0;
+}
+
+.preview {
+  background: #142a45;
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  min-height: 180px;
+}
+
+.small {
+  font-size: 12px;
+  color: #78889a;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #8190a1;
+  font-size: 12px;
+}
+
+@media(max-width:600px) {
+  main {
+    padding: 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">✈ Press<span>Pilot</span></div>
+  <p>AI Newsroom & Publishing Studio</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
+  <button onclick="showPage('radar',this)">NewsRadar</button>
+  <button onclick="showPage('writer',this)">AI Writer</button>
+  <button onclick="showPage('headlines',this)">Headlines</button>
+  <button onclick="showPage('graphics',this)">Graphic Studio</button>
+  <button onclick="showPage('publish',this)">Publisher</button>
+</nav>
+
+<main>
+<section id="dashboard" class="page active">
+
+<h1>Welcome to PressPilot</h1>
+
+<p class="muted">
+Your newsroom. Your stories. Your publishing studio.
+</p>
+
+<div class="cards">
+
+<div class="card">
+News Stories
+<strong>0</strong>
+<span class="small">Demo workspace</span>
+</div>
+
+<div class="card">
+Draft Articles
+<strong id="draftCount">0</strong>
+<span class="small">Saved drafts</span>
+</div>
+
+<div class="card">
+Graphics
+<strong id="graphicCount">0</strong>
+<span class="small">Design projects</span>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h3>Start creating</h3>
+
+<p class="muted">
+Choose a tool to begin your newsroom workflow.
+</p>
+
+<button class="primary"
+onclick="showPage('writer')">
+✍ Write an article
+</button>
+
+<button class="secondary"
+onclick="showPage('graphics')">
+Create a graphic
+</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Your newsroom workflow</h3>
+
+<p>
+① Discover news → ② Write your story →
+③ Create graphics → ④ Review → ⑤ Publish
+</p>
+
+<span class="tag">Human approval required</span>
+
+</div>
+
+</section>
+
+
+<section id="radar" class="page">
+
+<h1>NewsRadar</h1>
+
+<p class="muted">
+Your news discovery workspace.
+</p>
+
+<div class="panel">
+
+<span class="tag">DEMO CONTENT</span>
+
+<h3>Sample news topics</h3>
+
+<div class="story">
+<b>Technology</b>
+<p>
+Artificial intelligence and its impact on everyday life.
+</p>
+</div>
+
+<div class="story">
+<b>Philippines</b>
+<p>
+Community development and public service initiatives.
+</p>
+</div>
+
+<div class="story">
+<b>World</b>
+<p>
+Global developments in business and the economy.
+</p>
+</div>
+
+<p class="small">
+These are sample topics, not verified live news.
+</p>
+
+</div>
+
+</section>
+<section id="writer" class="page">
+
+<h1>AI Writer</h1>
+<p class="muted">Prepare a news article draft.</p>
+
+<div class="panel">
+
+<label>Story topic</label>
+<input id="topic" placeholder="Enter your news topic">
+
+<label>Output language</label>
+<select id="language">
+<option>English</option>
+<option>Filipino</option>
+</select>
+
+<label>Writing style</label>
+<select id="tone">
+<option>Professional news</option>
+<option>Breaking news</option>
+<option>Simple and engaging</option>
+</select>
+
+<button class="primary" onclick="makeDraft()">
+Create sample draft
+</button>
+
+<label>Article draft</label>
+<textarea id="article" placeholder="Your article will appear here..."></textarea>
+
+<button class="secondary" onclick="saveDraft()">
+Save draft
+</button>
+
+<p class="small">
+Prototype only: this creates a sample template, not verified reporting.
+Check facts and sources before publishing.
+</p>
+
+</div>
+</section>
+
+
+<section id="headlines" class="page">
+
+<h1>Headline Studio</h1>
+<p class="muted">Create headlines and social captions.</p>
+
+<div class="panel">
+
+<label>Story subject</label>
+
+<input id="headlineTopic"
+placeholder="Enter your story subject">
+
+<button class="primary" onclick="makeHeadline()">
+Create headline ideas
+</button>
+
+<div id="headlineResults"></div>
+
+</div>
+</section>
+<section id="graphics" class="page">
+
+<h1>Graphic Studio</h1>
+
+<p class="muted">
+Create a simple editable news graphic.
+</p>
+
+<div class="panel">
+
+<label>Headline</label>
+
+<input
+id="graphicTitle"
+placeholder="Enter your news headline"
+oninput="updateGraphic()"
+>
+
+<label>Subtitle</label>
+
+<input
+id="graphicSubtitle"
+placeholder="Enter subtitle"
+oninput="updateGraphic()"
+>
+
+<label>Background color</label>
+
+<select id="graphicColor" onchange="updateGraphic()">
+
+<option value="#142a45">Navy blue</option>
+<option value="#176b9b">News blue</option>
+<option value="#202020">Black</option>
+<option value="#7d2525">Dark red</option>
+
+</select>
+
+<h3>Graphic Preview</h3>
+
+<div class="preview" id="graphicPreview">
+
+<h2 id="previewTitle">
+YOUR NEWS HEADLINE
+</h2>
+
+<p id="previewSubtitle">
+Your subtitle appears here
+</p>
+
+<p class="small">
+PRESSPILOT NEWS
+</p>
+
+</div>
+
+<br>
+
+<button class="primary" onclick="saveGraphic()">
+Save Design
+</button>
+
+</div>
+
+</section>
+<section id="publish" class="page">
+
+<h1>Publishing Center</h1>
+
+<p class="muted">
+Prepare your content for social publishing.
+</p>
+
+<div class="panel">
+
+<h3>Facebook Pages</h3>
+
+<span class="tag">Not connected</span>
+
+<p>
+Official Facebook Page integration will be added in a later version.
+</p>
+
+<label>Post caption</label>
+
+<textarea
+id="postCaption"
+placeholder="Prepare your Facebook caption..."
+></textarea>
+
+<label>Schedule date and time</label>
+
+<input type="datetime-local" id="scheduleTime">
+
+<button class="primary" onclick="schedulePost()">
+Save Publishing Plan
+</button>
+
+<p id="publishMessage" class="small"></p>
+
+<p class="small">
+This prototype does not publish or schedule real Facebook posts.
+</p>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+PressPilot © 2026 · Create. Design. Publish.
+</footer>
+<script>
+
+function showPage(id, btn) {
+
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('nav button').forEach(b => {
+    b.classList.remove('active');
+  });
+
+  if (btn) {
+    btn.classList.add('active');
+  }
+
+}
+
+
+function makeDraft() {
+
+  const topic = document.getElementById('topic').value.trim();
+  const language = document.getElementById('language').value;
+  const tone = document.getElementById('tone').value;
+
+  if (!topic) {
+    alert('Please enter a story topic.');
+    return;
+  }
+
+  let draft;
+
+  if (language === 'Filipino') {
+
+    draft =
+      'PAMAGAT: ' + topic +
+      '\n\nPANIMULA:\nIlagay dito ang pangunahing kumpirmadong impormasyon tungkol sa paksa.' +
+      '\n\nMGA DETALYE:\nIdagdag ang mahahalagang detalye at mga pahayag na may malinaw na pinagmulan.' +
+      '\n\nKONTEKSTO:\nMagbigay ng karagdagang impormasyon mula sa mapagkakatiwalaang sanggunian.';
+
+  } else {
+
+    draft =
+      'HEADLINE: ' + topic +
+      '\n\nINTRODUCTION:\nWrite the main verified information about this topic here.' +
+      '\n\nDETAILS:\nAdd important details and statements with clear source attribution.' +
+      '\n\nCONTEXT:\nAdd background information from reliable sources.';
+
+  }
+
+  draft += '\n\nWriting style: ' + tone;
+  draft += '\n\nSources: Add source links before publication.';
+
+  document.getElementById('article').value = draft;
+
+}
+
+
+function saveDraft() {
+
+  const article = document.getElementById('article').value;
+
+  if (!article.trim()) {
+    alert('Create a draft first.');
+    return;
+  }
+
+  localStorage.setItem('presspilotDraft', article);
+
+  document.getElementById('draftCount').textContent = '1';
+
+  alert('Draft saved on this device.');
+
+}
+
+
+function makeHeadline() {
+
+  const topic = document.getElementById('headlineTopic').value.trim();
+
+  if (!topic) {
+    alert('Enter a story subject first.');
+    return;
+  }
+
+  const safeTopic = escapeHTML(topic);
+
+  document.getElementById('headlineResults').innerHTML =
+
+    '<div class="story">' +
+    '<b>Headline idea 1</b>' +
+    '<p>' + safeTopic + '</p>' +
+    '</div>' +
+
+    '<div class="story">' +
+    '<b>Headline idea 2</b>' +
+    '<p>What readers need to know about ' + safeTopic + '</p>' +
+    '</div>' +
+
+    '<div class="story">' +
+    '<b>Social caption starter</b>' +
+    '<p>Here are the key details about ' + safeTopic + '. Read the full story.</p>' +
+    '</div>';
+
+}
+
+
+function escapeHTML(text) {
+
+  return text.replace(/[&<>"']/g, function(character) {
+
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+
+    }[character];
+
+  });
+
+}
+
+
+function updateGraphic() {
+
+  document.getElementById('previewTitle').textContent =
+
+    document.getElementById('graphicTitle').value ||
+    'YOUR NEWS HEADLINE';
+
+  document.getElementById('previewSubtitle').textContent =
+
+    document.getElementById('graphicSubtitle').value ||
+    'Your subtitle appears here';
+
+  document.getElementById('graphicPreview').style.background =
+
+    document.getElementById('graphicColor').value;
+
+}
+
+
+function saveGraphic() {
+
+  const title = document.getElementById('graphicTitle').value;
+
+  const subtitle = document.getElementById('graphicSubtitle').value;
+
+  localStorage.setItem('presspilotGraphicTitle', title);
+
+  localStorage.setItem('presspilotGraphicSubtitle', subtitle);
+
+  document.getElementById('graphicCount').textContent = '1';
+
+  alert('Design saved on this device.');
+
+}
+
+
+function schedulePost() {
+
+  const date = document.getElementById('scheduleTime').value;
+
+  if (!date) {
+
+    alert('Choose a date and time first.');
+
+    return;
+
+  }
+
+  document.getElementById('publishMessage').textContent =
+
+    'Publishing plan saved for ' + date +
+    '. This is a local demo only.';
+
+}
+
+
+</script>
+
+</body>
+</html>
+
+
