@@ -503,41 +503,52 @@ function showPage(id, btn) {
 }
 
 
-function makeDraft() {
+async function makeDraft() {
 
   const topic = document.getElementById('topic').value.trim();
   const language = document.getElementById('language').value;
   const tone = document.getElementById('tone').value;
+  const articleBox = document.getElementById('article');
+  const button = document.querySelector('#writer button.primary');
 
   if (!topic) {
     alert('Please enter a story topic.');
     return;
   }
 
-  let draft;
+  button.disabled = true;
+  button.textContent = 'Generating with AI...';
+  articleBox.value = 'Connecting to PressPilot AI...';
 
-  if (language === 'Filipino') {
+  try {
+    const response = await fetch(
+      'https://presspilot-ai.fidelmaloloyon.workers.dev/generate',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topic,
+          language: language,
+          tone: tone,
+          source: ''
+        })
+      }
+    );
 
-    draft =
-      'PAMAGAT: ' + topic +
-      '\n\nPANIMULA:\nIlagay dito ang pangunahing kumpirmadong impormasyon tungkol sa paksa.' +
-      '\n\nMGA DETALYE:\nIdagdag ang mahahalagang detalye at mga pahayag na may malinaw na pinagmulan.' +
-      '\n\nKONTEKSTO:\nMagbigay ng karagdagang impormasyon mula sa mapagkakatiwalaang sanggunian.';
+    const result = await response.json();
 
-  } else {
+    if (!response.ok || !result.success) {
+      throw new Error(result.details || result.error || 'The AI request failed.');
+    }
 
-    draft =
-      'HEADLINE: ' + topic +
-      '\n\nINTRODUCTION:\nWrite the main verified information about this topic here.' +
-      '\n\nDETAILS:\nAdd important details and statements with clear source attribution.' +
-      '\n\nCONTEXT:\nAdd background information from reliable sources.';
-
+    articleBox.value = result.draft;
+  } catch (error) {
+    articleBox.value = '';
+    alert('PressPilot AI could not generate the article: ' + error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Generate AI article';
   }
-
-  draft += '\n\nWriting style: ' + tone;
-  draft += '\n\nSources: Add source links before publication.';
-
-  document.getElementById('article').value = draft;
 
 }
 
