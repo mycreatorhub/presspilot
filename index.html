@@ -195,6 +195,7 @@ footer {
   <button onclick="showPage('writer',this)">AI Writer</button>
   <button onclick="showPage('headlines',this)">Headlines</button>
   <button onclick="showPage('graphics',this)">Graphic Studio</button>
+  <button onclick="showPage('recreator',this)">Facebook Recreator</button>
   <button onclick="showPage('publish',this)">Publisher</button>
 </nav>
 
@@ -434,6 +435,43 @@ Save Design
 </div>
 
 </section>
+<section id="recreator" class="page">
+
+<h1>Facebook Post Recreator</h1>
+<p class="muted">Turn a Facebook post into a reviewed Filipino caption and a redesigned graphic.</p>
+
+<div class="panel">
+  <span class="tag">PHASE 1 · REVIEW BEFORE PUBLISHING</span>
+  <label>Original Facebook post link</label>
+  <input id="sourcePostUrl" type="url" placeholder="Paste a public Facebook post URL">
+  <label>Original post caption</label>
+  <textarea id="sourcePostCaption" placeholder="Paste the caption here if it cannot be extracted automatically..."></textarea>
+  <label>Original graphic / image</label>
+  <input id="sourcePostImage" type="file" accept="image/*" onchange="previewSourceImage(event)">
+  <div id="sourceImagePreview" class="small">No image selected yet.</div>
+  <p class="small">Facebook may block automatic access or expire image links. For this first in-app version, attach the original image here when available.</p>
+  <button class="primary" id="rewritePostButton" onclick="rewriteFacebookPost()">Rewrite caption with AI</button>
+</div>
+
+<div class="panel">
+  <h3>Rewritten Filipino caption</h3>
+  <textarea id="rewrittenPostCaption" placeholder="Your rewritten caption will appear here..."></textarea>
+  <label>Graphic headline</label>
+  <input id="recreatedGraphicHeadline" placeholder="Enter the headline for your new graphic">
+  <label>Graphic subtitle / context</label>
+  <textarea id="recreatedGraphicSubtitle" placeholder="Add supporting context. Keep claims factual and attributed."></textarea>
+  <button class="secondary" onclick="saveRecreatedPost()">Save as review draft</button>
+  <p id="recreatorStatus" class="small">Nothing has been saved yet.</p>
+</div>
+
+<div class="panel">
+  <h3>Publishing approval</h3>
+  <span class="tag">MANUAL APPROVAL REQUIRED</span>
+  <p class="muted">PressPilot will not publish to Facebook automatically. Check names, dates, numbers, quotations, image rights, and the final graphic before publishing.</p>
+</div>
+
+</section>
+
 <section id="publish" class="page">
 
 <h1>Publishing Center</h1>
@@ -673,6 +711,99 @@ function schedulePost() {
     'Publishing plan saved for ' + date +
     '. This is a local demo only.';
 
+}
+
+
+function previewSourceImage(event) {
+  const file = event.target.files && event.target.files[0];
+  const preview = document.getElementById('sourceImagePreview');
+  if (!file) {
+    preview.textContent = 'No image selected yet.';
+    return;
+  }
+  if (!file.type.startsWith('image/')) {
+    preview.textContent = 'Please choose an image file.';
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function() {
+    preview.innerHTML = '';
+    const image = document.createElement('img');
+    image.src = reader.result;
+    image.alt = 'Selected original Facebook graphic';
+    image.style.maxWidth = '100%';
+    image.style.maxHeight = '420px';
+    image.style.objectFit = 'contain';
+    image.style.borderRadius = '10px';
+    preview.appendChild(image);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function rewriteFacebookPost() {
+  const caption = document.getElementById('sourcePostCaption').value.trim();
+  const sourceUrl = document.getElementById('sourcePostUrl').value.trim();
+  const output = document.getElementById('rewrittenPostCaption');
+  const button = document.getElementById('rewritePostButton');
+  const status = document.getElementById('recreatorStatus');
+
+  if (!caption) {
+    alert('Add the original caption first. If Facebook access is blocked, copy the visible caption into this field.');
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Rewriting with AI...';
+  status.textContent = 'Preparing your Filipino caption...';
+
+  try {
+    const response = await fetch('https://presspilot-ai.fidelmaloloyon.workers.dev/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topic: 'Rewrite the following Facebook post caption in natural, professional Filipino. Preserve all names, dates, numbers, quotations, and factual claims exactly. Do not invent details. Attribute opinions to their source and clearly label unverified claims. Return only the rewritten caption.\n\n' + caption,
+        language: 'Filipino',
+        tone: 'Professional news',
+        source: sourceUrl
+      })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success || !result.draft) {
+      throw new Error(result.details || result.error || 'The AI request failed.');
+    }
+    output.value = result.draft;
+    status.textContent = 'Caption rewritten. Review it before saving.';
+  } catch (error) {
+    status.textContent = 'Could not rewrite the caption: ' + error.message;
+    alert('PressPilot could not rewrite the caption: ' + error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Rewrite caption with AI';
+  }
+}
+
+function saveRecreatedPost() {
+  const draft = {
+    sourceUrl: document.getElementById('sourcePostUrl').value.trim(),
+    originalCaption: document.getElementById('sourcePostCaption').value.trim(),
+    rewrittenCaption: document.getElementById('rewrittenPostCaption').value.trim(),
+    headline: document.getElementById('recreatedGraphicHeadline').value.trim(),
+    subtitle: document.getElementById('recreatedGraphicSubtitle').value.trim(),
+    status: 'Needs review',
+    savedAt: new Date().toISOString()
+  };
+  if (!draft.rewrittenCaption && !draft.headline) {
+    alert('Generate a rewritten caption or enter a graphic headline before saving.');
+    return;
+  }
+  const drafts = JSON.parse(localStorage.getItem('presspilotRecreatorDrafts') || '[]');
+  drafts.unshift(draft);
+  localStorage.setItem('presspilotRecreatorDrafts', JSON.stringify(drafts.slice(0, 25)));
+  document.getElementById('recreatorStatus').textContent = 'Saved locally as a review draft. It has not been published.';
+  document.getElementById('draftCount').textContent = String(
+    Number(document.getElementById('draftCount').textContent || 0) + 1
+  );
 }
 
 
